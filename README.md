@@ -1,9 +1,10 @@
 ## dockerfile-from-image
 Reverse-engineers a Dockerfile from a Docker image.
 
-Using the metadata that Docker stores alongside each layer of an image, the
-*dockerfile-from-image* script is able to re-create ([approximately](#limitations)) the
-Dockerfile that was used to generate an image.
+Similar to how the `docker history` command works, the *dockerfile-from-image*
+script is able to re-create the Dockerfile ([approximately](#limitations)) that
+was used to generate an image using the metadata that Docker stores alongside
+each image layer.
 
 ### Usage
 
@@ -54,6 +55,63 @@ the Dockerfile for that image being generated.
     ONBUILD WORKDIR /usr/src/app
     ONBUILD RUN [ ! -e Gemfile ] || bundle install --system
 
+### How Does It Work?
+
+When an image is constructed from a Dockerfile, each instruction in the 
+Dockerfile results in a new layer. You can see all of the image layers by
+using the `docker images` command with the (soon-to-deprecated) `--tree` flag.
+
+    $ docker images --treee
+    Warning: '--tree' is deprecated, it will be removed soon. See usage.
+    └─511136ea3c5a Virtual Size: 0 B Tags: scratch:latest
+      └─1e8abad02296 Virtual Size: 121.8 MB
+        └─f106b5d7508a Virtual Size: 121.8 MB
+          └─0ae4b97648db Virtual Size: 690.2 MB
+            └─a2df34bb17f4 Virtual Size: 808.3 MB Tags: buildpack-deps:latest
+              └─86258af941f7 Virtual Size: 808.6 MB
+                └─1dc22fbdefef Virtual Size: 846.7 MB
+                  └─00227c86ea87 Virtual Size: 863.7 MB
+                    └─564e6df9f1e2 Virtual Size: 1.009 GB
+                      └─55a2d383d743 Virtual Size: 1.009 GB
+                        └─367e535883e4 Virtual Size: 1.154 GB
+                          └─a47bb557ed2a Virtual Size: 1.154 GB
+                            └─0d4496202bc0 Virtual Size: 1.157 GB
+                              └─5db44b586412 Virtual Size: 1.446 GB
+                                └─bef6f00c8d6d Virtual Size: 1.451 GB
+                                  └─5f9bee597a47 Virtual Size: 1.451 GB
+                                    └─bb98b84e0658 Virtual Size: 1.452 GB
+                                      └─6556c531b6c1 Virtual Size: 1.552 GB
+                                        └─569e14fd7575 Virtual Size: 1.552 GB
+                                          └─fc3a205ba3de Virtual Size: 1.555 GB
+                                            └─5fd3b530d269 Virtual Size: 1.555 GB
+                                              └─6bdb3289ca8b Virtual Size: 1.555 GB
+                                                └─011aa33ba92b Virtual Size: 1.555 GB Tags: ruby:2, ruby:2.1, ruby:2.1.1, ruby:latest
+
+Each one of these layers is the result of executing an instruction in a
+Dockerfile. In fact, if you do a `docker inspect` on any one of these layers
+you can see the instruction that was used to generate that layer.
+
+    $ docker inspect 011aa33ba92b
+    [{
+      . . .
+      "ContainerConfig": {
+        "Cmd": [
+            "/bin/sh",
+            "-c",
+            "#(nop) ONBUILD RUN [ ! -e Gemfile ] || bundle install --system"
+        ],
+        . . .
+    }]
+
+The output above has been truncated, but nested within the *ContainerConfig* 
+data you'll find the Dockerfile command that generated this layer (in this case
+it was an `ONBUILD` instruction).
+
+The *dockerfile-from-image* script works by simply walking backward through the
+layer tree and collecting the commands stored with each layer. When the script
+reaches the first tagged layer (or the root of the tree) it stops and displays
+the (reversed) list of commands.
+   
 ### Limitations
 As the *dockerfile-from-image* script walks the list of layers contained in the
 image it stops when it reaches the first tagged layer. It is assumed that a layer

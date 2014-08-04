@@ -1,4 +1,4 @@
-FROM centurylinklabs/ruby-base:2.1.2
+FROM centurylink/ruby-base:2.1.2
 
 ADD dockerfile-from-image.rb /usr/src/app/dockerfile-from-image.rb
 WORKDIR /usr/src/app

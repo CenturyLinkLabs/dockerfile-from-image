@@ -8,7 +8,7 @@ each image layer.
 
 ### Usage
 
-The Ruby *dockerfile-from-image* script is itself packaged as a Docker image
+The Ruby *dockerfile-from-image* script is itself packaged as a [Docker image](https://registry.hub.docker.com/u/centurylink/dockerfile-from-image/)
 so it can easily be executed with the Docker *run* command:
 
     docker run -v /var/run/docker.sock:/var/run/docker.sock \

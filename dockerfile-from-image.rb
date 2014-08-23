@@ -1,21 +1,46 @@
 #! /usr/local/bin/ruby
 require 'docker'
+require 'optparse'
 
 NONE_TAG = '<none>:<none>'
 NOP_PREFIX = '#(nop) '
 
-image_id = ARGV.first
+options = {}
 commands = []
 
-# Collect all image tags into a hash keyed by layer ID
+# Docker will default to an empty string argument
+ARGV.pop if ARGV[0] == ''
+
+# Default to -h if no arguments
+ARGV << '-h' if ARGV.empty?
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: dockerfile-from-image.rb [options] <image_id>"
+
+  opts.on("-f", "--full-tree", "Generate Dockerfile for all parent layers") do |f|
+    options[:full] = f
+  end
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+end.parse!
+
+image_id = ARGV.pop
+abort('Error: Must specify image ID or tag') unless image_id
+
+# Collect all image tags into a hash keyed by layer ID.
+# Used to look-up potential FROM targets.
 tags = Docker::Image.all.each_with_object({}) do |image, hsh|
   tag = image.info['RepoTags'].first
   hsh[image.id] = tag unless tag == NONE_TAG
 end
 
 loop do
-  # If the current ID has a tag, render FROM instruction and break.
-  if commands && tags.key?(image_id)
+  # If the current ID has a tag, render FROM instruction and break
+  # (unless this is the first command)
+  if !options[:full] && commands && tags.key?(image_id)
     commands << "FROM #{tags[image_id]}"
     break
   end
@@ -34,7 +59,7 @@ loop do
     if cmd.start_with?(NOP_PREFIX)
       commands << cmd.split(NOP_PREFIX).last
     else
-      commands << "RUN #{cmd}"
+      commands << "RUN #{cmd}".squeeze(' ')
     end
   end
 

@@ -8,9 +8,6 @@ NOP_PREFIX = '#(nop) '
 options = {}
 commands = []
 
-# Docker will default to an empty string argument
-ARGV.pop if ARGV[0] == ''
-
 # Default to -h if no arguments
 ARGV << '-h' if ARGV.empty?
 

@@ -1,4 +1,6 @@
 ## dockerfile-from-image
+[![](https://badge.imagelayers.io/centurylink/dockerfile-from-image.svg)](https://imagelayers.io/?images=centurylink/dockerfile-from-image:latest 'Get your own badge on imagelayers.io')
+
 Reverse-engineers a Dockerfile from a Docker image.
 
 Similar to how the `docker history` command works, the *dockerfile-from-image*

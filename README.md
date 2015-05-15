@@ -68,7 +68,7 @@ When an image is constructed from a Dockerfile, each instruction in the
 Dockerfile results in a new layer. You can see all of the image layers by
 using the `docker images` command with the (soon-to-deprecated) `--tree` flag.
 
-    $ docker images --treee
+    $ docker images --tree
     Warning: '--tree' is deprecated, it will be removed soon. See usage.
     └─511136ea3c5a Virtual Size: 0 B Tags: scratch:latest
       └─1e8abad02296 Virtual Size: 121.8 MB

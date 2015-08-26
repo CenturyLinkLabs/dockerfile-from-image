@@ -36,12 +36,12 @@ the Dockerfile for that image being generated.
     $ docker pull ruby
     Pulling repository ruby
 
-    $ docker run -v /run/docker.sock:/run/docker.sock centurylink/dockerfile-from-image
+    $ docker run --rm -v /run/docker.sock:/run/docker.sock centurylink/dockerfile-from-image
     Usage: dockerfile-from-image.rb [options] <image_id>
         -f, --full-tree                  Generate Dockerfile for all parent layers
         -h, --help                       Show this message
 
-    $ docker run -v /run/docker.sock:/run/docker.sock centurylink/dockerfile-from-image ruby
+    $ docker run --rm -v /run/docker.sock:/run/docker.sock centurylink/dockerfile-from-image ruby
     FROM buildpack-deps:latest
     RUN useradd -g users user
     RUN apt-get update && apt-get install -y bison procps
@@ -61,6 +61,18 @@ the Dockerfile for that image being generated.
     ONBUILD ADD . /usr/src/app
     ONBUILD WORKDIR /usr/src/app
     ONBUILD RUN [ ! -e Gemfile ] || bundle install --system
+
+### Run it as local command
+
+```
+$ docker pull centurylink/dockerfile-from-image
+$ alias dfimage="docker run --rm -v /var/run/docker.sock:/var/run/docker.sock centurylink/dockerfile-from-image"
+$ dfimage --help
+Usage: dockerfile-from-image.rb [options] <image_id>
+    -f, --full-tree                  Generate Dockerfile for all parent layers
+    -h, --help                       Show this message
+$ dfimage ruby
+```
 
 ### How Does It Work?
 

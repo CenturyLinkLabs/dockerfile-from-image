@@ -1,4 +1,4 @@
-#! /usr/bin/ruby
+#! /usr/bin/env ruby
 require 'docker'
 require 'optparse'
 
@@ -56,7 +56,7 @@ loop do
     if cmd.start_with?(NOP_PREFIX)
       commands << cmd.split(NOP_PREFIX).last
     else
-      commands << "RUN #{cmd}".squeeze(' ')
+      commands << "RUN #{cmd}".split.join(' ')
     end
   end
 

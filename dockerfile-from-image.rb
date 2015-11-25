@@ -54,7 +54,7 @@ loop do
     cmd = cmd.last
 
     if cmd.start_with?(NOP_PREFIX)
-      commands << cmd.gsub(NOP_PREFIX,'').gsub(/^USER \[(.*)\]/,'USER \1')
+      commands << cmd.gsub(NOP_PREFIX,'').gsub(/^USER[ |\t]+\[(.*)\]/,'USER \1')
     else
       commands << "RUN #{cmd}".squeeze(' ')
     end

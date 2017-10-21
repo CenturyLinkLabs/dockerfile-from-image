@@ -1,9 +1,9 @@
-FROM alpine:3.2
+FROM alpine:3.6
 MAINTAINER CenturyLink Labs <clt-labs-futuretech@centurylink.com>
 
-RUN apk --update add ruby-dev ca-certificates && \
+RUN apk add  --update ruby-dev ruby-json && \
     gem install --no-rdoc --no-ri docker-api && \
-    apk del ruby-dev ca-certificates && \
+    apk del ruby-dev && \
     apk add ruby ruby-json && \
     rm /var/cache/apk/*
 

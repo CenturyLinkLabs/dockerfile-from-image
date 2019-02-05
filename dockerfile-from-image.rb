@@ -30,8 +30,8 @@ abort('Error: Must specify image ID or tag') unless image_id
 # Collect all image tags into a hash keyed by layer ID.
 # Used to look-up potential FROM targets.
 tags = Docker::Image.all.each_with_object({}) do |image, hsh|
-  tag = image.info['RepoTags'].first
-  hsh[image.id] = tag unless tag == NONE_TAG
+  tag = image.info['RepoTags']&.first
+  hsh[image.id] = tag if tag && tag != NONE_TAG
 end
 
 loop do

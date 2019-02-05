@@ -1,0 +1,21 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    backticks (1.0.2)
+    docker (0.4.0)
+      backticks (~> 1.0.0)
+    docker-api (1.34.2)
+      excon (>= 0.47.0)
+      multi_json
+    excon (0.62.0)
+    multi_json (1.13.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  docker
+  docker-api
+
+BUNDLED WITH
+   1.16.1

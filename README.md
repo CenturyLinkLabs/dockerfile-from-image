@@ -1,3 +1,7 @@
+## NOTE
+
+This repo is no longer being maintained. Users are welcome to fork it, but we make no warranty of its functionality.
+
 ## dockerfile-from-image
 [![](https://badge.imagelayers.io/centurylink/dockerfile-from-image.svg)](https://imagelayers.io/?images=centurylink/dockerfile-from-image:latest 'Get your own badge on imagelayers.io')
 
